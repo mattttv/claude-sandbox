@@ -1,4 +1,4 @@
-FROM alpine:latest
+FROM alpine/curl:latest
 RUN apk add --no-cache tinyproxy
 COPY tinyproxy.conf /etc/tinyproxy/tinyproxy.conf
 COPY allowlist.conf /etc/tinyproxy/filter

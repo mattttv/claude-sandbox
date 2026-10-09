@@ -6,5 +6,58 @@ claude-sandbox: runs claude
 claude-proxy: lets claude access claude api and nothing else by default
 
 ## Installation
+
 ### build containers
 
+podman build -t claude-sandbox claude-sandbox
+podman build -t claude-proxy claude-proxy
+
+### create networks
+internal networks does not have internet or dns access
+this also means that the proxy needs a fixed IP because podman-dns cannot be queried
+```
+podman network create --internal --subnet 10.89.50.0/24 --disable-dns claude-int
+```
+external network is only attached to the proxy
+```
+podman network create claude-ext
+````
+
+make sure two networks were added
+```
+podman network list
+```
+NETWORK ID    NAME        DRIVER
+ID1           claude-ext  bridge
+ID2           claude-int  bridge
+ID3           podman      bridge
+
+use inspect to make sure that dns is enabled on ext but disabled on int
+```
+podman network inspect claude-int | grep dns_enabled
+```
+
+### create claude folders - here you can put all files claude should have access to
+mkdir ~/claude-sandbox/workspace #holds code
+mkdir ~/claude-sandbox/config    #holds session,login-info
+
+### set alias for claude to use container
+proxy ip must match the ip in the following run command
+```
+alias claude='podman run -it --rm --userns=keep-id \
+  --network claude-int \
+  -e http_proxy=http://10.89.50.254:8888 \
+  -e https_proxy=http://10.89.50.254:8888 \
+  -e CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1 \
+  -v ~/claude-sandbox/workspace:/workspace \
+  -v ~/claude-sandbox/config:/home/dev/.claude \
+  claude-sandbox claude'
+```
+
+### run containers manually
+claude-proxy will be attached to both internal and external network
+
+```
+podman run -it --rm --network claude-int:ip=10.89.50.254 --network claude-ext --name claude-proxy localhost/claude-proxy
+```
+now you can use the alias claude, login and use the workspace folder
