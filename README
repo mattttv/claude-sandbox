@@ -44,7 +44,7 @@ mkdir ~/claude-sandbox/config    #holds session,login-info
 ### set alias for claude to use container
 proxy ip must match the ip in the following run command
 ```
-alias claude='podman run -it --rm --userns=keep-id \
+alias claude='podman run -it --rm --userns=keep-id --name=claude \
   --network claude-int \
   -e http_proxy=http://10.89.50.254:8888 \
   -e https_proxy=http://10.89.50.254:8888 \
