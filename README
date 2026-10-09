@@ -1,0 +1,10 @@
+# sandboxed claude
+
+create two containers that run claude
+
+claude-sandbox: runs claude
+claude-proxy: lets claude access claude api and nothing else by default
+
+## Installation
+### build containers
+

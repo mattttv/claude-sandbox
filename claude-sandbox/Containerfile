@@ -1,0 +1,9 @@
+FROM alpine:latest
+RUN apk add --no-cache bash curl git ripgrep libgcc libstdc++ ca-certificates
+RUN adduser -D dev
+USER dev
+RUN curl -fsSL https://claude.ai/install.sh | bash
+ENV PATH=/home/dev/.local/bin:$PATH \
+    CLAUDE_CONFIG_DIR=/home/dev/.claude \
+    USE_BUILTIN_RIPGREP=0
+WORKDIR /workspace
