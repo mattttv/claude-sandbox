@@ -1,9 +1,10 @@
 # sandboxed claude
 
-create two containers that run claude
+run claude inside a container without the need of visual studio code
+a local directory is mounted on the container where all the code can reside
 
 claude-sandbox: runs claude
-claude-proxy: lets claude access claude api and nothing else by default
+claude-proxy: lets claude access claude api and nothing else by default by using tinyproxy
 
 ## Installation
 
@@ -32,7 +33,7 @@ ID1           claude-ext  bridge
 ID2           claude-int  bridge
 ID3           podman      bridge
 
-use inspect to make sure that dns is enabled on ext but disabled on int
+use inspect to make sure that dns is disabled on claude-int
 ```
 podman network inspect claude-int | grep dns_enabled
 ```
